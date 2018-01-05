@@ -1,0 +1,99 @@
+{__NOLAYOUT__}
+{include file="index/top"}
+<div class="container">
+    <div class="row">
+        <div class="panel-heading">
+            __NAME__--环境检测
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <caption><h4>运行环境检查</h4></caption>
+                <thead>
+                <tr>
+                    <th>项目</th>
+                    <th>所需配置</th>
+                    <th>当前配置</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach($check_env as $item){ ?>
+                <tr>
+                    <td>{$item.title}</td>
+                    <td>{$item.limit}</td>
+                    <td><i class="fa {$item.icon}"></i> {$item.current}</td>
+                </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+            <present name="check_dirfile">
+                <table class="table table-hover">
+                    <caption><h4>目录、文件权限检查</h4></caption>
+                    <thead>
+                    <tr>
+                        <th>目录/文件</th>
+                        <th>所需状态</th>
+                        <th>当前状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($check_dirfile as $item){ ?>
+                    <tr>
+                        <td>{$item['path']}</td>
+                        <td><i class="fa fa-check text-success"></i> 可写</td>
+                        <td><i class="fa {$item['icon']}"></i> {$item['title']}</td>
+                    </tr>
+                    <?php } ?>
+                    </tbody>
+                </table>
+                <table class="table table-hover">
+                    <caption><h4>函数及扩展依赖性检查</h4></caption>
+                    <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>检查结果</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($check_func_and_ext as $item){ ?>
+                    <tr>
+                        <td>{$item['name']}</td>
+                        <td><i class="fa {$item['icon']}"></i> {$item['title']}</td>
+                    </tr>
+                    <?php } ?>
+                    </tbody>
+                </table>
+            </present>
+            <button class="btn btn-primary btn-block ajax-get" onclick="index2()">下一步</button>
+            <a class="btn btn-default btn-block" href="__HTTP__/install/index/index">上一步</a>
+        </div>
+        <div class="panel-footer">
+            <span>版权所有 (c) 2014－<?php echo date("Y",time());?>  __COMPANY__  保留所有权利。</span>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    function index2() {
+        $.ajax({
+            type:"get",
+            url:"__HTTP__/install/index/step2",
+            success:function (res) {
+                console.log(res);
+                if(res == "ok"){
+                    layer.msg("环境检测没有通过，请调整环境后重试！",
+                        {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+                    return;
+                }
+                layer.msg("恭喜您环境检测通过！",
+                    {icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+                setTimeout("window.location.href=\"__HTTP__/install/index/index3\";",2000);
+            }
+        });
+    }
+</script>
+<style type="text/css">
+    .dropdown1,.dropdown2{
+        background-color: #393d49;
+    }
+</style>
+</html>

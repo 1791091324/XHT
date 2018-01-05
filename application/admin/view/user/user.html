@@ -1,0 +1,115 @@
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true">
+    <span>系统</span> /
+    <span>系统权限</span> /
+    <span>用户管理</span>
+</span>
+{include file="user/error"}
+<div style="width: 100%;margin-top: 20px;">
+    <a name="edit" title="添加" class="btn edit-btn" href="__HTTP__/User/add">添加</a>
+    <a  name="disable" title="禁用" class="btn enable-btn" onclick="getEnable(0)" >禁用</a>
+    <a  name="disable" title="启用" class="btn disable-btn" onclick="getEnable(1)">启用</a>
+    <table border="1" width="100%" cellpadding="0" cellspacing="0" style="margin: 20px 0px;">
+        <tr style="height: 45px;">
+            <th width="3%">
+                <input type="checkbox" id="ids" onclick="getCheckbox()" />
+            </th>
+            <th width="5%">ID</th>
+            <th width="12%">昵称</th>
+            <th width="8%">用户类型</th>
+            <th width="16%">邮箱</th>
+            <th width="10%">手机号码</th>
+            <th width="11%">注册ip</th>
+            <th width="14%">创建时间</th>
+            <th width="7%">状态</th>
+            <th width="">操作</th>
+        </tr>
+        <?php foreach( $user as $datas) { ?>
+            <tr style="height: 45px;">
+                <th>
+                    <input type="checkbox" name="ids[]" onclick="getCheckboxByIds({$datas.id})" id="ids-{$datas.id}" value="{$datas.id}" />
+                </th>
+                <th>
+                    {$datas.id}
+                </th>
+                <td>
+                    {$datas.nickname}
+                </td>
+                <td>
+                    {$datas.user_type}
+                </td>
+                <td>
+                    {$datas.email}
+                </td>
+                <td>
+                    {$datas.mobile}
+                </td>
+                <td>
+                    {$datas.ip}
+                </td>
+                <td>
+                    {$datas.create_time}
+                </td>
+                <td>
+                    <?php if($datas["status"] == 1){ ?>
+                        <span class="glyphicon glyphicon-ok" style="color: #2ca02c;"></span>
+                    <?php } else { ?>
+                        <span class="glyphicon glyphicon-remove" style="color: red;"></span>
+                    <?php } ?>
+                </td>
+                <td>
+                    <a name="edit" title="编辑" class="btn edit-btn" href="__HTTP__/UserEdit/id/{$datas.id}">编辑</a>
+                    <?php if($datas["status"] == 1){ ?>
+                        <a name="disable" title="禁用" class="btn enable-btn" id="operation{$datas.id}" href="javascript:operation('__HTTP__/User/disableByEnable','{$datas.id}')">禁用</a>
+                    <?php } else { ?>
+                        <a name="edit" title="启用" class="btn disable-btn" id="operation{$datas.id}" href="javascript:operation('__HTTP__/User/disableByEnable','{$datas.id}')">启用</a>
+                    <?php } ?>
+                </td>
+            </tr>
+        <?php } ?>
+    </table>
+    {$user->render()}
+</div>
+<script type="text/javascript">
+    function getEnable(status) {
+        var aa = "";
+        $("input[name='ids[]']:checkbox:checked").each(function(){
+            aa+=$(this).val()+","
+        })
+        if(status == 0){
+            if(aa == ""){
+                layer.msg("请选择禁用项",
+                    {icon: 2,time: 2000,offset: 't',closeBtn: 0,shift:4});
+                return;
+            }
+        } else {
+            if(aa == ""){
+                layer.msg("请选择启用项",
+                    {icon: 2,time: 2000,offset: 't',closeBtn: 0,shift:4});
+                return;
+            }
+        }
+        $.ajax({
+            type:"POST",
+            url:"__HTTP__/getEnable",
+            data:{
+                "ids":aa,
+                "status":status
+            },
+            success:function (res) {
+                $("input[name='ids[]']").removeAttr("checked");
+                $("input[id='ids']").removeAttr('checked');
+                if(status == 0){
+                    layer.msg("禁用成功",
+                        {icon: 1,time: 2000,offset: 't',closeBtn: 0,shift:4});
+                } else {
+                    layer.msg("启用成功",
+                        {icon: 1,time: 2000,offset: 't',closeBtn: 0,shift:4});
+                }
+                setTimeout("getUser()",2000);
+            }
+        })
+    }
+    function getUser() {
+        window.location.href="__HTTP__/User";
+    }
+</script> 

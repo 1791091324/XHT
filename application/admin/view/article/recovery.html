@@ -1,0 +1,161 @@
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true">
+    <span>系统</span> /
+    <span>文章管理</span> /
+    <span>回收站</span>
+</span>
+<div style="width: 100%;margin-top: 20px;">
+    <a name="enable" title="回收站" class="btn enable-btn" onclick="getArticleByRecycle()" >回收</a>
+    <a name="delete" title="删除" class="btn delete-btn" onclick="getArticleByDelete()" >删除</a>
+    <table border="1" width="100%" id="myTable" cellpadding="0" cellspacing="0" style="margin-top: 20px;">
+        <tr style="height: 45px;">
+            <th width="3%">
+                <input type="checkbox" id="ids" onclick="getCheckbox()" />
+            </th>
+            <th width="5%">ID</th>
+            <th width="12%">文章标题</th>
+            <th width="10%">作者</th>
+            <th width="10%">文章类型</th>
+            <th width="10%">文章封面</th>
+            <th width="8%">访问量</th>
+            <th width="10%">是否置顶</th>
+            <th width="15%">创建时间</th>
+            <th>操作</th>
+        </tr>
+        <?php foreach( $article as $data) { ?>
+        <tr style="height: 45px;">
+            <th>
+                <input type="checkbox" name="ids[]" onclick="getCheckboxByIds({$data.id})" id="ids-{$data.id}" value="{$data.id}" />
+            </th>
+            <th>{$data.id}</th>
+            <td>{$data.title}</td>
+            <td>{$data.author}</td>
+            <td>{$data.ArticleType.title}</td>
+            <th><img src="__IMG__{$data.pictureImg.path}" style="max-width: 200px;max-height: 40px;"
+                  data-target="#modal" data-toggle="modal" onclick="getPicture('{$data.picture}')" /></th>
+            <td>{$data.hit}</td>
+            <th>
+                <div class='search_checkbox'>
+                    <?php if($data["top"] == "0") { ?>
+                    <input type='checkbox' id= 'switch{$data.id}' onclick="getRecycle({$data.id})" />
+                    <?php } else { ?>
+                    <input type='checkbox' id= 'switch{$data.id}' onclick="getRecycle({$data.id})"  checked />
+                    <?php } ?>
+                    <label for='switch{$data.id}'></label>
+                </div>
+            </th>
+            <td>{$data.create_time}</td>
+            <th>
+                <a name="disable" title="回收" class="btn enable-btn"
+                   onclick="ArticleByRecycle(this,{$data.id})" >回收</a>
+                <a name="delete" title="删除" class="btn delete-btn" id="operation{$data.id}"
+                   onclick="ArticleByDelete(this,{$data.id})">删除</a>
+            </th>
+        </tr>
+        <?php } ?>
+    </table>
+    {$article->render()}
+</div>
+<script type="text/javascript">
+    function ArticleByDelete(r,id) {
+        layer.confirm('请确认是否删除', {
+            icon: 3,btn: ['确认','取消'] //按钮
+        }, function(){
+            var i=r.parentNode.parentNode.rowIndex;
+            document.getElementById('myTable').deleteRow(i);
+            Delete(id+",");
+        }, function () {
+            layer.msg('取消操作', {icon: 0,time: 2000});
+        });
+    }
+    function getArticleByDelete() {
+        var aa = "";
+        $("input[name='ids[]']:checkbox:checked").each(function(){
+            aa+=$(this).val()+","
+            var i=this.parentNode.parentNode.rowIndex;
+            document.getElementById('myTable').deleteRow(i);
+        })
+        if(aa == ""){
+            layer.msg("请选择文章类型删除项",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return;
+        }
+        $("input[id='ids']").removeAttr('checked');
+        layer.confirm('请确认是否删除', {
+            icon: 3,btn: ['确认','取消'] //按钮
+        }, function(){
+            Delete(aa);
+        }, function () {
+            layer.msg('取消操作', {icon: 0,time: 2000});
+        });
+    }
+    function Delete(ids) {
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Article/Delete",
+            data:{
+                "ids":ids
+            },
+            success:function (res) {
+                layer.msg("操作成功",
+                    {icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+                setTimeout('Article()',300);
+            }
+        })
+    }
+    //是否置顶
+    function getRecycle(id) {
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Article/Recycle",
+            data:{
+                id:id,
+            },
+            success:function () {
+                window.location.href="__HTTP__/Article/Recovery";
+            }
+        })
+    }
+    //回收
+    function ArticleByRecycle(r,id) {
+        var i=r.parentNode.parentNode.rowIndex;
+        document.getElementById('myTable').deleteRow(i);
+        RecycleOne(id+",");
+    }
+    //多个回收
+    function getArticleByRecycle() {
+        var aa = "";
+        $("input[name='ids[]']:checkbox:checked").each(function(){
+            aa+=$(this).val()+","
+            var i=this.parentNode.parentNode.rowIndex;
+            document.getElementById('myTable').deleteRow(i);
+        })
+        if(aa == ""){
+            layer.msg("请选择文章类型删除项",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return;
+        }
+        $("input[id='ids']").removeAttr('checked');
+        RecycleOne(aa);
+    }
+    function RecycleOne(ids) {
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/RecycleOne",
+            data:{
+                ids:ids,
+                recycle:1
+            },
+            success:function (res) {
+                layer.msg("操作成功",
+                    {icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+                setTimeout('Article()',300);
+            }
+        })
+    }
+    function Article() {
+        var table =document.getElementById("myTable");
+        if(table.rows.length == 1){
+            window.location.href="__HTTP__/Article/Recovery";
+        }
+    }
+</script>

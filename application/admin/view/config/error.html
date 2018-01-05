@@ -1,0 +1,22 @@
+<input type="hidden" id="error" value="{$error}" />
+
+<script type="text/javascript">
+   function PageError() {
+        var error = document.getElementById("error").value;
+        if(error != ""){
+            if(error == "普通管理员"){
+                Alert("您没有操作权限",2);
+                setTimeout('UserAdmin()',3000);
+                return;
+            }
+            Alert(error,2);
+            setTimeout('User()',3000);
+        }
+   }
+   function User() {
+       window.location.href="__HTTP__/Config";
+   }
+   function UserAdmin() {
+       window.location.href="__HTTP__/Admin";
+   }
+</script>

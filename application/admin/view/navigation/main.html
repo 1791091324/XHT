@@ -1,0 +1,214 @@
+{include file="navigation/error"}
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true">
+    <span>系统</span> /
+    <span>系统功能</span> /
+    <span>主部导航</span>
+</span>
+<div style="width: 100%;margin-top: 20px;">
+    <a name="add" title="添加" class="btn edit-btn" href="__HTTP__/Navigation/Add">添加</a>
+    <a name="enable" title="禁用" class="btn enable-btn" onclick="getDisableAndEnabled(0)" >禁用</a>
+    <a name="disable" title="启用" class="btn disable-btn" onclick="getDisableAndEnabled(1)" >启用</a>
+    <a name="delete" title="删除" class="btn delete-btn" onclick="getNavigationDelete()" >删除</a>
+    <table border="1" width="100%" id="myTable" cellpadding="0" cellspacing="0" style="margin: 20px 0px;">
+        <tr style="height: 45px;">
+            <th width="3%">
+                <input type="checkbox" id="ids" onclick="getCheckbox()" />
+            </th>
+            <th width="5%">ID</th>
+            <th width="15%">导航标题</th>
+            <th width="10%">打开方式</th>
+            <th width="15%">创建时间</th>
+            <th width="15%">更新时间</th>
+            <th width="10%">排序</th>
+            <th width="10%">状态</th>
+            <th>操作</th>
+        </tr>
+        <?php foreach($nav as $data){ ?>
+            <tr style="height: 45px;">
+                <th>
+                    <input type="checkbox" name="ids[]" onclick="getCheckboxByIds({$data.id})" id="ids-{$data.id}"
+                        value="{$data.id}" />
+                </th>
+                <th>{$data.id}</th>
+                <td>{$data.title}</td>
+                <td>
+                    <?php if($data["target"] == ""){ ?>  当前窗口
+                    <?php } else { ?> 新窗口打开  <?php } ?>
+                </td>
+                <td>{$data.create_time}</td>
+                <td>{$data.update_time}</td>
+                <td>{$data.sort}</td>
+                <td>
+                    <?php if($data["status"] == 1){ ?>
+                        <span class="glyphicon glyphicon-ok" style="color: #2ca02c;"></span>
+                    <?php } else { ?>
+                        <span class="glyphicon glyphicon-remove" style="color: red;"></span>
+                    <?php } ?>
+                </td>
+                <th>
+                    <a name="edit" title="编辑" class="btn edit-btn" href="__HTTP__/Navigation/edit?id={$data.id}">编辑</a>
+                    <?php if($data["status"] == 1) { ?>
+                        <a name="enable" title="禁用" class="btn enable-btn" id="operation{$data.id}"
+                           href="javascript:DisableAndEnabled('{$data.id}')">禁用</a>
+                    <?php } else { ?>
+                        <a name="disable" title="启用" class="btn disable-btn" id="operation{$data.id}"
+                           href="javascript:DisableAndEnabled('{$data.id}')">启用</a>
+                    <?php } ?>
+                    <a name="delete" title="删除" class="btn delete-btn" id="operation{$data.id}"
+                       onclick="NavigationDelete('{$data.id}')">删除</a>
+                </th>
+            </tr>
+            <?php foreach( $data['NavPid'] as $navs) { ?>
+                <tr style="height: 45px;">
+                    <th>
+                        <input type="checkbox" name="ids[]" onclick="getCheckboxByIds({$navs.id})"
+                               id="ids-{$navs.id}" value="{$navs.id}" />
+                    </th>
+                    <th>{$navs.id}</th>
+                    <td style="padding-left: 30px;">┝  {$navs.title}</th>
+                    <td>
+                        <?php if($navs["target"] == ""){ ?>
+                        当前窗口
+                        <?php } else { ?>
+                        新窗口打开
+                        <?php } ?>
+                    </th>
+                    <td>{$navs.create_time}</td>
+                    <td>{$navs.update_time}</td>
+                    <td  style="padding-left: 30px;">┝  {$navs.sort}</td>
+                    <td>
+                        <?php if($navs["status"] == 1){ ?>
+                        <span class="glyphicon glyphicon-ok" style="color: #2ca02c;"></span>
+                        <?php } else { ?>
+                        <span class="glyphicon glyphicon-remove" style="color: red;"></span>
+                        <?php } ?>
+                    </td>
+                    <th>
+                        <a name="edit" title="编辑" class="btn edit-btn"
+                           href="__HTTP__/Navigation/edit?id={$navs.id}">编辑</a>
+                        <?php if($navs["status"] == 1){ ?>
+                        <a name="enable" title="禁用" class="btn enable-btn" id="operation{$navs.id}"
+                           href="javascript:DisableAndEnabled('{$navs.id}')">禁用</a>
+                        <?php } else { ?>
+                        <a name="disable" title="启用" class="btn disable-btn" id="operation{$navs.id}"
+                           href="javascript:DisableAndEnabled('{$navs.id}')">启用</a>
+                        <?php } ?>
+                        <a name="delete" title="删除" class="btn delete-btn" id="operation{$navs.id}"
+                           onclick="NavigationDelete('{$navs.id}')">删除</a>
+                    </th>
+                </tr>
+            <?php } ?>
+        <?php } ?>
+    </table>
+    {$nav->render()}
+</div>
+<script type="text/javascript">
+    //禁用或启用
+    function DisableAndEnabled(id) {
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Navigation/DisableAndEnabled",
+            data:{
+                id:id
+            },
+            success:function (res) {
+                if(res.errMsg == "令牌失效"){
+                    Alert("登录状态失效,请重新登录",1);
+                    setTimeout("login()",3000);
+                    return;
+                }
+                Alert("操作成功",1);
+                setTimeout('main()',2000);
+            }
+        })
+    }
+    //批量禁用或启用
+    function getDisableAndEnabled(status) {
+        var text = "请选择启用项";
+        var contText = "启用成功";
+        if(status == 0){
+            text = "请选择禁用项";
+            contText = "禁用成功";
+        }
+        var aa = "";
+        $("input[name='ids[]']:checkbox:checked").each(function(){
+            aa+=$(this).val()+",";
+        })
+        if(aa == ""){
+            layer.msg(text,
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return;
+        }
+        $("input[id='ids']").removeAttr('checked');
+        $("input[name='ids[]']").removeAttr('checked');
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Navigation/getDisableAndEnabled",
+            data:{
+                ids:aa,
+                status:status
+            },
+            success:function (res) {
+                if(res.errMsg == "令牌失效"){
+                    Alert("登录状态失效,请重新登录",1);
+                    setTimeout("login()",3000);
+                    return;
+                }
+                Alert(contText,1);
+                setTimeout('main()',2000);
+            }
+        })
+    }
+    //删除
+    function NavigationDelete(id) {
+        layer.confirm('请确认是否删除', {
+            icon: 3,btn: ['确认','取消'] //按钮
+        }, function() {
+            Delete(id + ",");
+        }, function () {
+            layer.msg('取消操作', {icon: 0,time: 2000});
+        });
+    }
+    //批量删除
+    function getNavigationDelete() {
+        var aa = "";
+        $("input[name='ids[]']:checkbox:checked").each(function(){
+            aa+=$(this).val()+",";
+        })
+        if(aa == ""){
+            layer.msg("请选择删除项",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return;
+        }
+        $("input[id='ids']").removeAttr('checked');
+        $("input[name='ids[]']").removeAttr('checked');
+        layer.confirm('请确认是否删除', {
+            icon: 3,btn: ['确认','取消'] //按钮
+        }, function() {
+            Delete(aa);
+        },function () {
+            layer.msg('取消操作', {icon: 0,time: 2000});
+        });
+    }
+    function Delete(ids) {
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Navigation/Delete",
+            data:{
+                ids:ids
+            },
+            success:function (res) {
+                if(res.errMsg == "令牌失效"){
+                    Alert("登录状态失效,请重新登录",1);
+                    setTimeout("login()",3000);
+                    return;
+                }
+                Alert("删除成功",1);
+                setTimeout('main()',2000);
+            }
+        })
+    }
+    function main() {
+        window.location.href="__HTTP__/Navigation/main";
+    }
+</script>

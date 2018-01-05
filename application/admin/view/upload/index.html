@@ -1,0 +1,85 @@
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true">
+    <span>系统</span> /
+    <span>系统功能</span> /
+    <span>图片管理</span>
+</span>
+
+<div style="width: 100%;margin-top: 20px;">
+    <a name="add" title="添加" class="btn edit-btn" href="__HTTP__/Upload/getAdd">添加</a>
+    <a name="delete" title="删除" class="btn delete-btn" onclick="getDelete()" >删除</a>
+    <table border="1" width="100%" id="myTable" cellpadding="0" cellspacing="0" style="margin: 20px 0px;">
+        <tr style="height: 45px;">
+            <th width="3%">
+                <input type="checkbox" id="ids" onclick="getCheckbox()" />
+            </th>
+            <th width="5%">ID</th>
+            <th width="27%">昵称</th>
+            <th width="10%">路径</th>
+            <th width="10%">类型</th>
+            <th width="10%">后缀</th>
+            <th width="10%">大小</th>
+            <th width="15%">创建时间</th>
+            <th>操作</th>
+        </tr>
+        <?php foreach( $upload as $data) { ?>
+            <tr style="height: 45px;">
+                <th>
+                    <input type="checkbox" name="ids[]" onclick="getCheckboxByIds({$data.id})" id="ids-{$data.id}" value="{$data.id}" />
+                </th>
+                <td>{$data.id}</td>
+                <td>{$data.filename}</td>
+                <th><img src="__IMG__{$data.path}" style="max-width: 200px;max-height: 40px;"
+                         data-target="#modal" data-toggle="modal" onclick="getPicture('{$data.id}')"  /></th>
+                <td>{$data.mime}</td>
+                <td>{$data.ext}</td>
+                <td>{$data.size}</td>
+                <td>{$data.create_time}</td>
+                <th>
+                    <a name="delete" title="删除" class="btn delete-btn" id="operation{$data.id}"
+                       href="javascript:operation('__HTTP__/Upload/delete','{$data.id}')">删除</a>
+                </th>
+            </tr>
+        <?php } ?>
+    </table>
+    {$upload->render()}
+</div>
+<script>
+	function Upload() {
+        window.location.href="__HTTP__/Upload";
+    }
+    function getDelete() {
+        var flag = false;
+        $("input[name='ids[]']:checkbox:checked").each(function(){
+            flag = true;
+        });
+        if(!flag){
+            layer.msg("请选择图片删除项",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return;
+        }
+        layer.confirm("请确认是否删除",{
+            icon:2,btn:['确认','取消']
+        },function () {
+            var aa = "";
+            $("input[name='ids[]']:checkbox:checked").each(function(){
+                aa+=$(this).val()+","
+            })
+            $.ajax({
+                type:"POST",
+                url:"__HTTP__/Upload/getDelete",
+                data:{
+                    "ids":aa
+                },
+                success:function (res) {
+                    $("input[id='ids']").removeAttr('checked');
+                    layer.msg("图片删除成功",
+                        {icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+                    setTimeout('Upload()',300);
+                }
+            })
+        },function () {
+            $("input[id='ids']").removeAttr('checked');
+            layer.msg('取消操作', {icon: 0,time: 2000});
+        });
+    }
+</script>

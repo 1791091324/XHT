@@ -1,0 +1,113 @@
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true" style="position: absolute;top: 23px;">
+    <span>系统</span> /
+    <span>文章管理</span> /
+    <span>文章评论</span>
+</span>
+<div style="width: 100%;margin-top: 20px;">
+    <a name="add" title="添加" class="btn edit-btn" href="__HTTP__/Comment/Add">添加</a>
+    <a name="delete" title="删除" class="btn delete-btn" onclick="getCommentByDelete()" >删除</a>
+    <table border="1" width="100%" id="myTable" cellpadding="0" cellspacing="0" style="margin: 20px 0px;">
+        <tr style="height: 45px;">
+            <th width="3%">
+                <input type="checkbox" id="ids" onclick="getCheckbox()" />
+            </th>
+            <th width="5%">ID</th>
+            <th width="20%">文章标题</th>
+            <th width="15%">ip地址</th>
+            <th width="15%">所属地址</th>
+            <th width="10%">评论状态</th>
+            <th width="15%">创建时间</th>
+            <th>操作</th>
+        </tr>
+        <?php foreach( $list as $data) { ?>
+            <tr style="height: 45px;">
+                <th>
+                    <input type="checkbox" name="ids[]" onclick="getCheckboxByIds({$data.id})" id="ids-{$data.id}" value="{$data.id}" />
+                </th>
+                <th>{$data.id}</th>
+                <td>{$data.getArticle.title}</td>
+                <td>{$data.ip}</td>
+                <td>{$data.address}</td>
+                <td>评论</td>
+                <td>{$data.create_time}</td>
+                <th>
+                    <a name="edit" title="编辑" class="btn edit-btn" href="__HTTP__/Comment/edit?id={$data.id}">编辑</a>
+                    <a name="enable" title="回复" class="btn enable-btn" href="__HTTP__/Comment/Add?id={$data.id}">回复</a>
+                    <a name="delete" title="删除" class="btn delete-btn" id="operation{$data.id}"
+                       onclick="CommentDelete('{$data.id}')">删除</a>
+                </th>
+                <?php foreach( $data['CommentId'] as $Comment) { ?>
+                    <tr style="height: 45px;">
+                        <th>
+                            <input type="checkbox" name="ids[]" onclick="getCheckboxByIds({$Comment.id})" id="ids-{$Comment.id}" value="{$Comment.id}" />
+                        </th>
+                        <th>{$Comment.id}</th>
+                        <td style="padding-left: 30px;">┝  {$Comment.getArticle.title}</td>
+                        <td>{$Comment.ip}</td>
+                        <td>{$Comment.address}</td>
+                        <td style="padding-left: 30px;">┝  回复</td>
+                        <td>{$Comment.create_time}</td>
+                        <th>
+                            <a name="edit" title="编辑" class="btn edit-btn" href="__HTTP__/Comment/edit?id={$Comment.id}">编辑</a>
+                            <a name="delete" title="删除" class="btn delete-btn" id="operation{$Comment.id}"
+                               onclick="CommentDelete('{$Comment.id}')">删除</a>
+                        </th>
+                <?php } ?>
+            </tr>
+        <?php } ?>
+    </table>
+    {$list->render()}
+</div>
+<script type="text/javascript">
+    function CommentDelete(id) {
+        layer.confirm('请确认是否删除', {
+            icon: 3,btn: ['确认','取消'] //按钮
+        }, function() {
+            Delete(id + ",");
+        }, function () {
+            layer.msg('取消操作', {icon: 0,time: 2000});
+        });
+    }
+    function getCommentByDelete() {
+        var aa = "";
+        $("input[name='ids[]']:checkbox:checked").each(function(){
+            aa+=$(this).val()+",";
+        })
+        if(aa == ""){
+            layer.msg("请选择删除项",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return;
+        }
+        $("input[id='ids']").removeAttr('checked');
+        $("input[name='ids[]']").removeAttr('checked');
+        layer.confirm('请确认是否删除', {
+            icon: 3,btn: ['确认','取消'] //按钮
+        }, function() {
+            Delete(aa);
+        },function () {
+            layer.msg('取消操作', {icon: 0,time: 2000});
+        });
+    }
+    function Delete(ids) {
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Comment/Delete",
+            data:{
+                "ids":ids
+            },
+            success:function (res) {
+                if(res.errMsg == "令牌失效"){
+                    Alert("登录状态失效,请重新登录",1);
+                    setTimeout("login()",3000);
+                    return;
+                }
+                layer.msg("操作成功",
+                    {icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+                setTimeout('Comment()',3000);
+            }
+        })
+    }
+    function Comment() {
+        window.location.href="__HTTP__/Comment";
+    }
+</script> 

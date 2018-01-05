@@ -1,0 +1,27 @@
+{__NOLAYOUT__}
+{include file="index/top"}
+<div class="container">
+    <div class="row">
+        <div class="panel-heading">
+            __NAME__--开始安装
+        </div>
+        <div class="panel-body">
+            <div id="show-list" class="install-database">
+                {volist name='tables' id='tables'}
+                <p>{$tables}</p>
+                {/volist}
+            </div>
+            <button class="btn btn-warning" onclick="window.location.href='__HTTP__/install/index/index5'">下一步</button>
+        </div>
+        <div class="panel-footer">
+            <span>版权所有 (c) 2014－<?php echo date("Y",time());?>  __COMPANY__  保留所有权利。</span>
+        </div>
+    </div>
+</div>
+</body>
+<style type="text/css">
+    .dropdown1,.dropdown2,.dropdown3,.dropdown4{
+        background-color: #393d49;
+    }
+</style>
+</html>

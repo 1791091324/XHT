@@ -1,0 +1,63 @@
+<div class="menu col-md-2" style="padding-right: 0px;padding-left: 0px;">
+    <div class="menu-wrapper">
+        <ul class="menu-first-list">
+            <li class="menu-first-item">
+                <p class="item-title">
+                    <i class="iconfont left-btn"></i>
+                    <span>系统功能</span>
+                    <i class="iconfont icon-right"></i>
+                </p>
+                <ul class="menu-second-list">
+                    <?php if($token["user_type"] == 1) { ?>
+                        <li><a href="{:url('Admin/Config/index')}">系统配置</a></li>
+                        <li><a href="{:url('Admin/Navigation/main')}">主部导航</a></li>
+                        <li><a href="{:url('Admin/Navigation/bottom')}">底部导航</a></li>
+                        <li><a href="{:url('Admin/Record/download')}">下载记录</a></li>
+                        <li><a href="{:url('Admin/Record/install')}">安装记录</a></li>
+                    <?php } ?>
+                    <li><a href="{:url('Admin/Upload/index')}">图片管理</a></li>
+                </ul>
+            </li>
+            <?php if($token["user_type"] == 1) { ?>
+                <li class="menu-first-item">
+                    <p class="item-title">
+                        <i class="iconfont left-btn"></i>
+                        <span>系统权限</span>
+                        <i class="iconfont icon-right"></i>
+                    </p>
+                    <ul class="menu-second-list">
+                        <li><a href="{:url('Admin/User/user')}">用户管理</a></li>
+                        <li><a href="{:url('Admin/User/add')}">添加用户</a></li>
+                    </ul>
+                </li>
+            <?php } ?>
+            <li class="menu-first-item">
+                <p class="item-title">
+                    <i class="iconfont left-btn"></i>
+                    <span>文章管理</span>
+                    <i class="iconfont icon-right"></i>
+                </p>
+                <ul class="menu-second-list">
+                    <?php if($token["user_type"] == 1) { ?>
+                        <li><a href="{:url('Admin/Article/Type')}">文章类型</a></li>
+                    <?php } ?>
+                    <li><a href="{:url('Admin/Article/add')}">添加文章</a></li>
+                    <li><a href="{:url('Admin/Article/index')}">查询文章</a></li>
+                    <li><a href="{:url('Admin/Article/Recovery')}">回收站</a></li>
+                    <li><a href="{:url('Admin/Comment/index')}">文章评论</a></li>
+                </ul>
+            </li>
+            <li class="menu-first-item">
+                <p class="item-title">
+                    <i class="iconfont left-btn"></i>
+                    <span>公告管理</span>
+                    <i class="iconfont icon-right"></i>
+                </p>
+                <ul class="menu-second-list">
+                    <li><a href="{:url('Admin/Notice/add')}">添加公告</a></li>
+                    <li><a href="{:url('Admin/Notice/index')}">查询公告</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>

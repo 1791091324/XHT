@@ -1,0 +1,140 @@
+{__NOLAYOUT__}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册操作</title>
+    <link rel="apple-touch-icon" type="image/x-icon" href="__IMG__/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="__IMG__{$token.config.image}">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="__STATIC__/plugin/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="__CSS__/login/login.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="content">
+        <div class="content-top">
+            <h3>注册</h3>
+        </div>
+        <div class="error-info">
+            <span></span>
+        </div>
+        <form class="form-horizontal">
+            <div class="form-group has-feedback">
+                <label for="username" class="col-md-3 control-label">账号</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="输入账号">
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label for="nickname" class="col-md-3 control-label">昵称</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="nickname" name="nickname" placeholder="输入昵称">
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label for="password" class="col-md-3 control-label">密码</label>
+                <div class="col-md-9">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="输入密码">
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label for="password2" class="col-md-3 control-label">确认密码</label>
+                <div class="col-md-9">
+                    <input type="password" class="form-control" id="password2" name="password2" placeholder="再次输入密码">
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group login-btn-wrapper">
+                <button type="button" class="login-btn" onclick="getRegister()">注册</button>
+            </div>
+            <div class="go-register">
+                <a href="__HTTP__/login">已有账号,去登录!</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="__STATIC__/plugin/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="__JS__/common/common.js"></script>
+<script src="__JS__/login/register.js"></script>
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="__CSS-JS__layer/layer.js"></script>
+<script src="__CSS-JS__layer/extend/layer.ext.js"></script>
+<script type="text/javascript">
+    function getRegister() {
+        var username = $('input[name="username"]').val();
+        var nickname = $('input[name="nickname"]').val();
+        var password = $('input[name="password"]').val();
+        var passwords = $('input[name="password2"]').val();
+        if(username == ""){
+            ERRORAlert("请输入您的账号...");
+            return false;
+        }
+        if(nickname == ""){
+            ERRORAlert("请输入您的昵称...");
+            return false;
+        }
+        if(password == ""){
+            ERRORAlert("请输入您的密码...");
+            return false;
+        }
+        if(passwords == ""){
+            ERRORAlert("请输入您的确认密码...");
+            return false;
+        }
+        if(password != passwords){
+            ERRORAlert("您输入的密码与确认密码不一致");
+            document.getElementById("password").value="";
+            document.getElementById("password2").value="";
+            return false;
+        }
+        var json = {"username":username,"password":password,"nickname":nickname}
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/getRegister",
+            data:json,
+            success:function (res) {
+                if(res.errMsg=="该账号已存在..."){
+                    ERRORAlert(res.errMsg);
+                    return;
+                }
+                SUCCESSAlert("注册成功");
+                setTimeout('login()',3000);
+            }
+        });
+    }
+    function login() {
+        window.location.href="__HTTP__/login";
+    }
+    function SUCCESSAlert(e) {
+        layer.alert(e, {
+            icon: 1,
+            skin: 'layer-ext-moon',
+            time: 2000,
+            offset: 't',
+            closeBtn: 0,
+            title: '温馨提示',
+            btn: [],
+            shift:4
+        });
+    }
+    function ERRORAlert(e) {
+        layer.alert(e, {
+            icon: 2,
+            skin: 'layer-ext-moon',
+            time: 2000,
+            offset: 't',
+            closeBtn: 0,
+            title: '温馨提示',
+            btn: [],
+            shift:4
+        });
+    }
+</script>
+</body>
+</html>

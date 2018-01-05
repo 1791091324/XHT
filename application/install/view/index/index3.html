@@ -1,0 +1,124 @@
+{__NOLAYOUT__}
+{include file="index/top"}
+<div class="container">
+    <div class="row">
+        <div class="panel-heading">
+            __NAME__--参数设置
+        </div>
+        <div class="panel-body">
+            <!--<form class="form" method="post" action="__HTTP__/install/index/index4" -->
+                  <!--onsubmit="return getInstall()" >-->
+                <h2 style="font-size: 30px;margin-bottom: 10px;margin-top: 20px;">数据库连接信息</h2>
+                <div class="form-group">
+                    <label class="control-label">数据库连接类型</label>
+                    <div class="control-group">
+                        <select name="db[DB_TYPE]" id="db_type" class="form-control">
+                            <option>mysql</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">数据库服务器，数据库服务器IP，一般为127.0.0.1</label>
+                    <div class="control-group">
+                        <input class="form-control" type="text" name="db[DB_HOST]" id="db_host" value="127.0.0.1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">数据库端口</label>
+                    <div class="control-group">
+                        <input class="form-control" type="text" name="db[DB_PORT]" id="db_port" value="3306">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">数据库名</label>
+                    <div class="control-group">
+                        <input class="form-control" type="text" name="db[DB_NAME]" id="db_name" value="pxrj">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">数据库用户名</label>
+                    <div class="control-group">
+                        <input class="form-control" type="text" id="db_user" name="db[DB_USER]" value="root">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">数据库密码</label>
+                    <div class="control-group">
+                        <input class="form-control" type="password" id="db_pwd" name="db[DB_PWD]" value="">
+                    </div>
+                </div>
+                <input type="button" class="btn btn-primary btn-block" value="下一步" onclick="getInstall()" />
+                <a class="btn btn btn-default btn-block" href="__HTTP__/install/index/index2">上一步</a>
+            <!--</form>-->
+        </div>
+        <div class="panel-footer">
+            <span>版权所有 (c) 2014－<?php echo date("Y",time());?>  __COMPANY__  保留所有权利。</span>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    function getInstall() {
+        var db_type = document.getElementById("db_type").value;
+        var db_host = document.getElementById("db_host").value;
+        var db_port = $("input[id='db_port']").val();
+        var db_name = $("input[id='db_name']").val();
+        var db_user = $("input[id='db_user']").val();
+        var db_pwd = $("input[id='db_pwd']").val();
+        if(db_host == ""){
+            layer.msg("数据库服务器IP",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(db_port == ""){
+            layer.msg("数据库端口",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(db_name == ""){
+            layer.msg("数据库名",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(db_user == ""){
+            layer.msg("数据库用户名",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(db_pwd == ""){
+            layer.msg("数据库密码",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        var json = {db:{type:db_type,host:db_host,port:db_port,username:db_user,password:db_pwd,database:db_name}};
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/InstallDataBase",
+            data:json,
+            success:function (res) {
+                console.log(res);
+                if(res.errMsg == "请填写完整的数据库配置"){
+                    layer.msg(res.errMsg,
+                        {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+                    return false;
+                }
+                if(res.errMsg == "数据库连接失败，请检查数据库配置！"){
+                    layer.msg(res.errMsg,
+                        {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+                    return false;
+                }
+                setTimeout("window.location.href=\"__HTTP__/install/index/index4\";",2000);
+            },
+            error:function () {
+                layer.msg("数据库连接失败，请检查数据库配置！",
+                    {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            }
+        });
+    }
+</script>
+<style type="text/css">
+    .dropdown1,.dropdown2,.dropdown3{
+        background-color: #393d49;
+    }
+</style>
+</html>

@@ -1,0 +1,129 @@
+{__NOLAYOUT__}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录操作</title>
+    <link rel="apple-touch-icon" type="image/x-icon" href="__IMG__\favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="__IMG__{$token.config.image}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="__STATIC__/plugin/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="__CSS__/login/login.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="content">
+        <div class="content-top">
+            <h3>登录</h3>
+        </div>
+        <div class="error-info">
+            <span></span>
+        </div>
+        <form class="form-horizontal">
+            <div class="form-group  has-feedback">
+                <label for="username" class="col-md-2 control-label">账号</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="输入账号">
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label for="password" class="col-md-2 control-label">密码</label>
+                <div class="col-md-10">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="输入密码">
+                    <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <div class="col-sm-6 checkbox">
+                        <label>
+                            <input class="checkbox"  type="checkbox">记住账号密码
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="flag" name="flag" value="{$token.flag}" />
+            <div class="form-group login-btn-wrapper">
+                <button type="button" class="login-btn" onclick="getLogin()">登录</button>
+            </div>
+            <div class="go-register">
+                <a href="__HTTP__/register">还没账号,立即注册!</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="__STATIC__/plugin/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="__JS__/common/common.js"></script>
+<script src="__STATIC__/plugin/JquerySession.js"></script>
+<script src="__JS__/login/login.js"></script>
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="__CSS-JS__layer/layer.js"></script>
+<script src="__CSS-JS__layer/extend/layer.ext.js"></script>
+<script type="text/javascript">
+    window.onload=function () {
+        var flag = document.getElementById("flag").value;
+        if(flag == "true"){
+            login();
+        }
+    }
+    function getLogin() {
+        var username = $('input[name="username"]').val();
+        var password = $('input[name="password"]').val();
+        if(username == ""){
+            layer.msg('请输入您的账号',
+                {icon: 1,time: 2000,offset: 't',closeBtn: 0,shift:4});
+            return;
+        }
+        if(password == ""){
+            layer.msg("请输入 您的密码",
+                {icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+            return;
+        }
+        var json = {"username":username,"password":password}
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/getLogin",
+            data:json,
+            success:function (res) {
+                console.log(res)
+                if(res.errMsg != ""){
+                    ERRORAlert(res.errMsg);
+                    return;
+                }
+                SUCCESSAlert("登录成功");
+                setTimeout('login()',3000);
+            }
+        });
+    }
+    function login() {
+        window.location.href="__HTTP__/admin";
+    }
+    function SUCCESSAlert(e) {
+        layer.alert(e, {
+            icon: 1,
+            skin: 'layer-ext-moon',
+            time: 2000,
+            offset: 't',
+            closeBtn: 0,
+            title: '温馨提示',
+            btn: [],
+            shift:4
+        });
+    }
+    function ERRORAlert(e) {
+        layer.alert(e, {
+            icon: 2,
+            skin: 'layer-ext-moon',
+            time: 2000,
+            offset: 't',
+            closeBtn: 0,
+            title: '温馨提示',
+            btn: [],
+            shift:4
+        });
+    }
+</script>
+</body>
+</html>

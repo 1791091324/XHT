@@ -1,0 +1,21 @@
+{__NOLAYOUT__}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {include file="home/link"}
+    <link rel="stylesheet" href="__CSS__/index/article.css">
+
+</head>
+<body>
+{include file="home/nav"}
+<div style="width: 100%;text-align: center; padding-top:88px;">
+    <i class="layui-icon" style="line-height: 500px; font-size: 500px; color: #393D50;"></i>
+</div>
+{include file="home/bottom"}
+<script type="text/javascript">
+    window.onload=function () {
+        layer.msg("站点被关闭",
+            {icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+    }
+</script>

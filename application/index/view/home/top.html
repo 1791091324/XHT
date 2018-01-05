@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{$token.title}</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="apple-touch-icon" type="image/x-icon" href="__IMG__\favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="__IMG__{$token.image}">
+    <link rel="stylesheet" href="__STATIC__/plugin/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_503496_sgntl8o48mqb0529.css">
+    <link rel="stylesheet" href="__CSS__/common/common.css">
+    <link rel="stylesheet" href="__CSS__/index/index.css">
+    <link rel="stylesheet" href="__JS__/layui/css/layui.css">
+    <style type="text/css">
+        .collapse ul li{
+            margin-right: 26px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target="#example-navbar-collapse">
+                    <span class="sr-only">切换导航</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <?php if($token["config"]["logo"] == 0){ ?>
+                <a class="navbar-brand" href="">
+                    <img class="logo" src="__STATIC__/assets/logo.png">
+                    <span class="nav-name"></span>
+                </a>
+                <?php } else { ?>
+                <a class="navbar-brand" href="">
+                    <img class="logo" src="__IMG__{$token.image}"/>
+                    <span class="nav-name" style="color: #cccccc;margin-left: 41px;">{$token.slogan}</span>
+                </a>
+                <?php } ?>
+            </div>
+            <div class="collapse navbar-collapse"       id="example-navbar-collapse">
+                <ul class="nav navbar-nav  navbar-right">
+                    <?php foreach($nav as $data){ ?>
+                        <?php if(count($data["nav_pid"]) == 0 ){ ?>
+                            <li class="dropdown">
+                                <a href="{$data.url}" target="{$data.target}">{$data.title}</a>
+                            </li>
+                        <?php } else { ?>
+                            <li class="dropdown">
+                                <a  href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    {$data.title}
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <?php foreach($data["nav_pid"] as $nav) { ?>
+                                        <li>
+                                            <a href="{$nav.url}" target="{$nav.target}">
+                                                {$nav.title}
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                        <?php } ?>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div style="height: auto; min-height: 692px;">

@@ -1,0 +1,185 @@
+<div class="header">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target="#example-navbar-collapse">
+                    <span class="sr-only">切换导航</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <?php if($token["config"]["logo"] == 0){ ?>
+                    <a class="navbar-brand" href="">
+                        <img class="logo" src="__STATIC__/assets/logo.png">
+                        <span class="nav-name"></span>
+                    </a>
+                <?php } else { ?>
+                    <a class="navbar-brand" href="">
+                        <img class="logo" src="__IMG__{$token.config.image}"/>
+                        <span class="nav-name" style="color: #cccccc;margin-left: 41px;">{$token.config.slogan}</span>
+                    </a>
+                <?php } ?>
+            </div>
+            <div class="collapse navbar-collapse"       id="example-navbar-collapse">
+                <ul class="nav navbar-nav  navbar-right">
+                    <li>
+                        <a id="showLeftTime"></a>
+                    </li>
+                    <li class="active">
+                        <a href="javascript:getCaching()">
+                            <span class="glyphicon glyphicon-trash"></span>  清除缓存
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{:url('Admin/Index/Index')}">
+                            <span class="glyphicon glyphicon-new-window"></span> 首页
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-user"></span> {$token["nickname"]}
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="{:url('Admin/User/Password')}">
+                                    <span class="glyphicon glyphicon-pencil"></span> 修改密码
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{:url('Admin/User/EditInfo')}">
+                                    <span class="glyphicon glyphicon-list-alt"></span> 用户信息
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-cog"></span> 用户管理
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="__HTTP__/Admin">
+                                    <span class="glyphicon glyphicon-new-window"></span> 首页
+                                </a>
+                            </li>
+                            <?php if($token["user_type"] == 1) { ?>
+                                <li>
+                                    <a href="javascript:EliminateToken()">
+                                        <span class="glyphicon glyphicon-trash"></span> 清除令牌缓存
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:fileByConfigure()">
+                                        <span class="glyphicon glyphicon-refresh"></span> 文件重新配置
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <li>
+                                <a href="javascript:getLogout()">
+                                    <span class="glyphicon glyphicon-log-out"></span>  退出登录
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="__CSS-JS__layer/layer.js"></script>
+<script src="__CSS-JS__layer/extend/layer.ext.js"></script>
+<script type="text/javascript">
+    function showLeftTime() {
+        var now=new Date();
+        var year=now.getFullYear();
+        var month=now.getMonth();
+        var day=now.getDate();
+        var hours=now.getHours();
+        var minutes=now.getMinutes();
+        var seconds=now.getSeconds();
+        var nowDay = now.getDay();
+        if(nowDay == 0){ nowDay = "星期日"; }
+        if(nowDay == 1){ nowDay = "星期一"; }
+        if(nowDay == 2){ nowDay = "星期二"; }
+        if(nowDay == 3){ nowDay = "星期三"; }
+        if(nowDay == 4){ nowDay = "星期四"; }
+        if(nowDay == 5){ nowDay = "星期五"; }
+        if(nowDay == 6){ nowDay = "星期六"; }
+        document.getElementById("showLeftTime").innerHTML="<span class='glyphicon glyphicon-calendar'></span>  "+year+"年"+month+"月"+day+"日 "+hours+":"+minutes+":"+seconds+" "+nowDay+"";
+        //一秒刷新一次显示时间
+    }
+    window.setInterval('showLeftTime()',1000);
+    function EliminateToken() {
+        layer.confirm('该缓存一清空,所有用户必须重新登录', {
+            icon: 3,btn: ['清空','取消'] //按钮
+        }, function(){
+            $.ajax({
+                type:'post',
+                url: '{:url("Admin/Upload/getToken")}',
+                success: function (res) {
+                    layer.msg('请重新登录', {icon: 1,time: 2000});
+                    setTimeout('getLogin()',3000);
+                }
+            })
+        }, function(){
+            layer.msg('取消清除令牌缓存', {icon: 0,time: 2000});
+        });
+    }
+    function fileByConfigure() {
+        var test = window.location.href;
+        test = test.split("index.php")[0];
+        layer.confirm('如果页面显示正常，请不要操作该项',{
+            icon: 3,btn: ['确认','取消'] //按钮
+        }, function () {
+            $.ajax({
+                type:"post",
+                url:test+"index.php/fileByConfigure",
+                success:function (res) {
+                    layer.msg('操作成功', {icon: 1,time: 2000});
+                    setTimeout('window.location.href="__HTTP__/admin"',3000);
+                }
+            });
+        }, function () {
+            layer.msg("取消操作",{icon:0,time:2000});
+        });
+    }
+    function getLogout() {
+        $.ajax({
+            type:"post",
+            url:"{:url('Admin/User/Logout')}",
+            success:function (res) {
+                SUCCESSAlert("成功退出登录");
+                setTimeout('getLogin()',3000);
+            }
+        })
+    }
+    function getLogin() {
+        window.location.href="{:url('Login/Login/login')}";
+    }
+    function getCaching() {
+        $.ajax({
+            type:'post',
+            url: "{:url('Admin/Upload/getCaching')}",
+            success: function (res) {
+                var data = "清除缓存成功";
+                SUCCSSAlert(data);
+            }
+        })
+    }
+    function SUCCSSAlert(e) {
+        layer.alert(e, {
+            icon: 1,
+            skin: 'layer-ext-moon',
+            time: 2000,
+            offset: 't',
+            closeBtn: 0,
+            title: '温馨提示',
+            btn: [],
+            shift:4
+        });
+    }
+</script> 

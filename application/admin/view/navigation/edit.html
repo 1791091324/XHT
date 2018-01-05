@@ -1,0 +1,182 @@
+{include file="navigation/error"}
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true" style="position: absolute;top: 23px;">
+    <span>系统</span> /
+    <span>导航管理</span> /
+    <span>编辑导航</span>
+</span>
+<row>
+    <div class="col-md-8" style="margin-top: 37px;">
+        <form class="form-horizontal">
+            <input type="hidden" id="id" name="id" value="{$nav.id}" />
+            <input type="hidden" id="PS" name="PS" value="{$nav.pid}" />
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">导航分组</div>
+                </label>
+                <div class="col-md-9">
+                    <select class="form-control" id="group" name="group">
+                        <option value="">请选择</option>
+                        <option value="main" <?php if($nav["group"] == "main"){?> selected="selected" <?php } ?> >主部导航</option>
+                        <option value="bottom" <?php if($nav["group"] == "bottom"){?> selected="selected" <?php } ?>>底部导航</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">上级导航</div>
+                </label>
+                <div class="col-md-9">
+                    <select class="form-control" id="pid" name="pid">
+                        <option value="0">顶级导航</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">导航标题</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" id="title" name="title"
+                           class="form-control"  placeholder=请输入导航标题 value="{$nav.title}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">路由地址</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" id="url" name="url" class="form-control"
+                         value="{$nav.url}"  placeholder="请输入路由地址" />
+                    <span style="color: #056;margin-top: 6px;">请输入完整的地址路径(如:https://www.baidu.com)</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">打开方式</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="radio" id="rad7" name="target"
+                        <?php if($nav["target"] == ""){?> checked <?php } ?> value=""/>
+                    <span style="margin-left:5px;margin-right: 10px;position: relative;top: 4px;">
+                        当前窗口
+                    </span>
+                    <input type="radio" id="rad8" name="target" value="_blank"
+                        <?php if($nav["target"] == "_blank"){?> checked <?php } ?> />
+                    <span style="margin-left:5px;margin-right: 10px;position: relative;top: 4px;">
+                        新窗口打开
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">排序</div>
+                </label>
+                <div class="col-md-9">
+                    <input class="form-control" type="number" id="sort" name="sort"
+                           step="1" min="0" placeholder="排序" value="{$nav.sort}" />
+                </div>
+            </div>
+            <div class="form-group save-btn" style="">
+                <button type="button" onclick="getNavigationByEdit()" >保存</button>
+                <button type="button" onclick="javascript:history.back(-1);return false;" style="background: red;">取消</button>
+            </div>
+        </form>
+    </div>
+</row>
+<script src='__CSS-JS__js/jquery.js'></script>
+<script src="__CSS-JS__js/index.js"></script>
+<script type="text/javascript">
+    function getNavigationByEdit() {
+        var id = $("input[name='id']").val();
+        var group = document.getElementById("group").value;
+        var pid = document.getElementById("pid").value;
+        var title = $("input[name='title']").val();
+        var url = $("input[name='url']").val();
+        var radio = document.getElementsByName("target");
+        var target = "";
+        for(var i=0;i<radio.length;i++){
+            if(radio[i].checked){
+                target = radio[i].value;
+            }
+        }
+        var sort = $("input[name='sort']").val();
+        if(group.length == 0){
+            Alert("请选择导航分组",2);
+            return false;
+        }
+        if(title.length == 0){
+            Alert("请输入导航标题",2);
+            return false;
+        }
+        if(title.length >= 30){
+            Alert("导航标题不能超过30个字符",2);
+            return false;
+        }
+        if(url.length > 0){
+            if(!(/^[0-9|a-z|A-Z|/|\\|*|?|&|=|#|:|.]*$/.test(url))){
+                Alert("路由地址输入不合法",2);
+                return false;
+            }
+        }
+        var json = {group:group,pid:pid,title:title,url:url,target:target,sort:sort,id:id};
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Navigation/edit",
+            data:json,
+            success:function (res) {
+                if(res.errMsg == "令牌失效"){
+                    Alert("登录状态失效,请重新登录",1);
+                    setTimeout("login()",3000);
+                    return;
+                }
+                Alert("编辑成功",1);
+                if(group == "main"){
+                    setTimeout('main()',3000);
+                } else {
+                    setTimeout('bottom()',3000);
+                }
+            }
+        })
+    }
+    function main() {
+        window.location.href="__HTTP__/Navigation/main";
+    }
+    function bottom() {
+        window.location.href="__HTTP__/Navigation/bottom";
+    }
+    function onLoadGrop(pid,group) {
+        if(group.length > 0){
+            $.ajax({
+                type:"POST",
+                url:"__HTTP__/Navigation/group",
+                data:{"group":group},
+                dataType:"json",
+                success:function (res) {
+                    var option=$("<option></option>");
+                    $(option).val("0");
+                    $(option).html("顶级导航");
+                    $("#pid").html(option);
+                    for(var i in res){
+                        var option=$("<option></option>");
+                        $(option).val(res[i]['id']);
+                        $(option).html(res[i]['title']);
+                        $("#pid").append(option);
+                        if(res[i]['id'] == pid){
+                            $("#pid").find("option[value='"+pid+"']").attr("selected",true);
+                        }
+                    }
+                }
+            })
+        } else {
+            var option=$("<option></option>");
+            $(option).val("0");
+            $(option).html("顶级导航");
+            $("#pid").html(option);
+        }
+    }
+    $("#group").change(function () {
+        var group = $(this).val();
+        var pid = document.getElementById("PS").value;
+        onLoadGrop(pid,group);
+    })
+</script>

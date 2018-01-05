@@ -1,0 +1,33 @@
+
+<div class="footer">
+    <div class="footer-wrapper">
+        <div class="row" style="display: flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;justify-content: center;">
+            <?php foreach($bottom as $data){ ?>
+                <div class="footer-list col-sm-3">
+                    <h4>
+                        <a href="{$data.url}" target="{$data.target}" style="color: #cccccc;">{$data.title}</a>
+                    </h4>
+                    <?php foreach($data["nav_pid"] as $nav) { ?>
+                        <ul >
+                            <li class="footer-item">
+                                <a href="{$nav.url}" target="{$nav.target}" style="color: #cccccc;">
+                                    {$nav.title}
+                                </a>
+                            </li>
+                        </ul>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        {$token.record}|{$token.copyright}
+    </div>
+</div>
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="__STATIC__/plugin/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="__CSS-JS__/plupload/plupload.full.min.js"></script>
+<script type="text/javascript" src="http://www.sucaihuo.com/Public/js/sucaihuo.js"></script>
+<script src="__JS__/layui/layui.js" charset="utf-8"></script>
+<script src="__CSS-JS__layer/layer.js"></script>
+<script src="__CSS-JS__layer/extend/layer.ext.js"></script>

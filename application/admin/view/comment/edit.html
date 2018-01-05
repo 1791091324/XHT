@@ -1,0 +1,97 @@
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true" style="position: absolute;top: 23px;">
+    <span>系统</span> /
+    <span>文章管理</span> /
+    <span>文章评论</span> /
+    <span>编辑文章评论</span>
+</span>
+<row>
+    <div class="col-md-8" style="margin-top: 37px;">
+        <form class="form-horizontal">
+            <input type="hidden" id="id" name="id" value="{$list.id}" />
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">所属地址</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="address" name="address"
+                           placeholder="请输入所属地址" value="{$list.address}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">ip地址</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="ip" name="ip"
+                           placeholder="请输入ip地址" value="{$list.ip}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="logo" class="col-md-3 control-label">
+                    <div class="text-center">内容</div>
+                </label>
+                <div class="col-md-9">
+                    <script id="content" name="content" type="text/plain">{$list.content}</script>
+                </div>
+            </div>
+            <div class="form-group save-btn" style="">
+                <button type="button" onclick="getCommentEdit()" >保存</button>
+                <button type="button" onclick="javascript:history.back(-1);return false;" style="background: red;">取消</button>
+            </div>
+        </form>
+    </div>
+</row>
+<!-- 配置文件 -->
+<script type="text/javascript" src="__STATIC__/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__STATIC__/ueditor/ueditor.all.js"></script>
+<script type="text/javascript">
+    var contents = UE.getEditor('content',{
+        initialFrameWidth :900,//设置编辑器宽度
+        initialFrameHeight:200,//设置编辑器高度
+    });
+    function getCommentEdit() {
+        var address = $("input[name='address']").val();
+        var ip = $("input[name='ip']").val();
+        var content = contents.getContent();
+        var id = $("input[name='id']").val();
+        if(address.length == 0){
+            Alert("请输入所属地址",2);
+            return false;
+        }
+        if(address.length > 20){
+            Alert("所属地址输入长度不能超过20字符",2);
+            return false;
+        }
+        var reg =  /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+        if(ip.length > 0){
+            if(!reg.test(ip)){
+                Alert("ip地址输入不合法",2);
+                return false;
+            }
+        }
+        if(content.length == 0){
+            Alert("请输入内容",2);
+            return false;
+        }
+        var json = {id:id,address:address,ip:ip,content:content};
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Comment/edit",
+            data:json,
+            success:function(res){
+                if(res.errMsg == "令牌失效"){
+                    layer.msg("登录状态已失效，请重新登录",
+                        {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+                    setTimeout('login()',3000);
+                    return;
+                }
+                Alert("编辑成功",1);
+                setTimeout("Comment()",2000);
+            }
+        });
+    }
+    function Comment() {
+        window.location.href="__HTTP__/Comment";
+    }
+</script>

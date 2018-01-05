@@ -1,0 +1,14 @@
+<input type="hidden" id="error" value="{$error}" />
+
+<script type="text/javascript">
+   function PageError() {
+        var error = document.getElementById("error").value;
+        if(error != ""){
+            ERRORAlert(error);
+            setTimeout('User()',3000);
+        }
+   }
+   function User() {
+       window.location.href="__HTTP__/Upload";
+   }
+</script>

@@ -1,0 +1,162 @@
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true">
+    <span>系统</span> /
+    <span>系统权限</span> /
+    <span>添加用户</span>
+</span>
+<row>
+    <div class="col-md-8 col-md-offset-2" style="margin-top: 37px;">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户昵称</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="nickname"
+                           name="nickname" placeholder="请输入用户昵称">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户类型</div>
+                </label>
+                <div class="col-md-9">
+                    <select class="form-control" id="user_type" name="user_type">
+                        <option value="">请选择</option>
+                        <option value="1">超级管理员</option>
+                        <option value="2">普通管理员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户账号</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="username"
+                           name="username" placeholder="请输入用户账号">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户密码</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="password" class="form-control" id="password"
+                           name="password" placeholder="请输入用户密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">确认密码</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="password" class="form-control" id="passwords"
+                           name="passwords" placeholder="请输入用户确认密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户邮箱</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="email"
+                           name="email" placeholder="请输入用户邮箱">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户手机号码</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="mobile"
+                           name="mobile" placeholder="请输入用户手机号码">
+                </div>
+            </div>
+            <div class="form-group save-btn">
+                <button type="button" onclick="return getUserAdd()" >保存</button>
+                <button type="button" onclick="javascript:history.back(-1);return false;" style="background: red;">取消</button>
+            </div>
+        </form>
+    </div>
+</row>
+<script type="text/javascript">
+    function getUserAdd() {
+        var nickname = $('input[name="nickname"]').val();
+        var user_type = document.getElementById("user_type").value;
+        var username = $("input[name='username']").val();
+        var password = $("input[name='password']").val();
+        var passwords = $("input[name='passwords']").val();
+        var email = $("input[name='email']").val();
+        var mobile = $("input[name='mobile']").val();
+        if(nickname == ""){
+            layer.msg("请输入用户昵称",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(user_type == ""){
+            layer.msg("请选择用户类型",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(username == ""){
+            layer.msg("请输入用户账号",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        var name = /^([a-zA-Z0-9])\w{4,20}$/;
+        if(!name.test(username)){
+            layer.msg("用户账号必须最少4-20个字母、数字组成",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(password == ""){
+            layer.msg("请输入用户密码",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(passwords == ""){
+            layer.msg("请输入用户确认密码",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        if(password != passwords){
+            layer.msg("您两次 输入的密码不一致",
+                {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+            return false;
+        }
+        var myReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+        if(email != ""){
+            if(!myReg.test(email)){
+                layer.msg("您输入的邮箱号码不合法",
+                    {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+                return false;
+            }
+        }
+        var pattern=/^((13[0-9])|(15[1-3,5-9])|(17[7])|(18[0-9]))\d{8}$/;
+        if(mobile != ""){
+            if(!pattern.test(mobile)){
+                layer.msg("您输入的手机号码不合法",
+                    {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+                return false;
+            }
+        }
+        var json = {"nickname":nickname,"user_type":user_type,"username":username,"password":password,"email":email,"mobile":mobile};
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/User/add",
+            data:json,
+            success:function (res) {
+                if(res.errMsg == "账号已存在"){
+                    layer.msg("账号已存在",
+                        {icon:2,time:2000,offset:'t',closeBtn:0,shift:4});
+                    return;
+                }
+                layer.msg("用户添加成功",{icon:1,time:2000,offset:'t',closeBtn:0,shift:4});
+                setTimeout('User()',3000);
+            }
+        })
+    }
+    function User() {
+        window.location.href="__HTTP__/User";
+    }
+</script> 

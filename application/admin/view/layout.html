@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{$token.config.title}</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="apple-touch-icon" type="image/x-icon" href="__IMG__\favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="__IMG__{$token.config.image}">
+    <link rel="stylesheet" href="__STATIC__/plugin/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_503496_sgntl8o48mqb0529.css">
+    <link rel="stylesheet" href="__CSS__/common/common.css">
+    <link rel="stylesheet" href="__CSS__/admin/admin.css">
+    <link rel="stylesheet" href="__JS__/layui/css/layui.css">
+</head>
+<body>
+{include file="home:header"}
+<div class="content">
+    <div class="row">
+        {include file="home:navigation"}
+        <div class="col-md-9" style="background: #f8f8f8;height:auto;min-height:790px;width: 83%;">
+            <div class="content-wrapper" style="margin: 0 -2px;">
+                {__CONTENT__}
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" value='{$token["errMsg"]}' id="token"  />
+{include file="home:footer"}
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true" style=" margin-left: 100px;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body" id="modal_yuan" style='text-align: center;'>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="__STATIC__/plugin/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="__JS__/common/common.js"></script>
+<script src="__JS__/admin/admin.js"></script>
+<script type="text/javascript" src="http://www.sucaihuo.com/Public/js/other/jquery.js"></script>
+<script type="text/javascript" src="__CSS-JS__/plupload/plupload.full.min.js"></script>
+<script type="text/javascript" src="http://www.sucaihuo.com/Public/js/sucaihuo.js"></script>
+<script src="__JS__/layui/layui.js" charset="utf-8"></script>
+</body>
+</html>
+<script type="text/javascript">
+    function getPicture(id) {
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Upload/pictureEnlarge",
+            data:{
+                id:id
+            },
+            success:function (res) {
+                document.getElementById("modal_yuan").innerHTML="<img src='__IMG__"+res+"' width='90%' />";
+            }
+        });
+    }
+    window.onload = function () {
+        showLeftTime();
+        var token = document.getElementById("token").value;
+        if(token != ""){
+            SUCCESSAlert("请登录后,在操作");
+            setTimeout('login()',3000);
+            return;
+        }
+        if(document.getElementById("error")){
+            PageError();
+        }
+        if(document.getElementById("PS")){
+            var pid = document.getElementById("PS").value;
+            var group = document.getElementById("group").value;
+            onLoadGrop(pid,group);
+        }
+    }
+    function Alert(text,id) {
+        layer.msg(text,
+            {icon:id,time:2000,offset:'t',closeBtn:0,shift:4});
+    }
+    function login() {
+        window.location.href="__HTTP__/login";
+    }
+    function getCheckboxByIds(id) {
+        var ids = $("input[id='ids-"+id+"']").is(':checked');
+        if(!ids){
+            $("input[id='ids']").removeAttr('checked');
+        }
+        var items = document.getElementsByName("ids[]");         //这个语句帮我们筛选出一组name为checked的复选框。。
+        for(var j=0; j<items.length; j++){
+            if(!items[j].checked){               //如果该复选框被选中
+                return;                         //统计被选中的个数
+            }
+        }
+        $("input[id='ids']").attr("checked", "true");
+    }
+    function getCheckbox() {
+        var ids = $("input[id='ids']").is(':checked');
+        if(ids) {
+            $("input[name='ids[]']").attr("checked", "true");
+        } else {
+            $("input[name='ids[]']").removeAttr("checked");
+        }
+    }
+    $(document).ready(function(){
+        $(".edit-btn").mousemove(function(e){
+            this.setAttribute("style","color: #ffffff;background-color: #138de6;");
+        });
+        $(".edit-btn").mouseout(function(e){
+            this.setAttribute("style","background-color: #ffffff;color: #138de6;");
+        });
+        $(".disable-btn").mousemove(function(e){
+            this.setAttribute("style","color: #ffffff;background-color: #ebb724;");
+        });
+        $(".disable-btn").mouseout(function(e){
+            this.setAttribute("style","background-color: #ffffff;color: #ebb724;");
+        });
+        $(".enable-btn").mousemove(function(e){
+            this.setAttribute("style","color: #ffffff;background-color: #2bc286;");
+        });
+        $(".enable-btn").mouseout(function(e){
+            this.setAttribute("style","background-color: #ffffff;color: #2bc286;");
+        });
+        $(".delete-btn").mousemove(function(e){
+            this.setAttribute("style","color: #ffffff;background-color: red;");
+        });
+        $(".delete-btn").mouseout(function(e){
+            this.setAttribute("style","background-color: #ffffff;color: red;");
+        });
+    });
+    layui.use('upload', function(){
+        var $ = layui.jquery
+            ,upload = layui.upload;
+
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#test1'
+            ,url: '__HTTP__/lay_img_upload'
+            ,before: function(obj){
+                obj.preview(function(index, file, result){
+                    $('#image').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                $('#logo').attr('value', res.id);
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+    });
+</script>

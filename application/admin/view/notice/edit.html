@@ -1,0 +1,79 @@
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true" style="position: absolute;top: 23px;">
+    <span>系统</span> /
+    <span>公告管理</span> /
+    <span>查询公告</span> /
+    <span>编辑公告</span>
+</span>
+<row>
+    <div class="col-md-8" style="margin-top: 37px;">
+        <form class="form-horizontal">
+            <input type="hidden" value="{$notice.id}" id="id" name="id" />
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">公告标题</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="name" name="name"
+                           placeholder="请输入公告标题" value="{$notice.name}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="logo" class="col-md-3 control-label">
+                    <div class="text-center">公告内容</div>
+                </label>
+                <div class="col-md-9">
+                    <script id="content" name="content" type="text/plain">{$notice.content}</script>
+                </div>
+            </div>
+            <div class="form-group save-btn" style="">
+                <button type="button" onclick="getNoticeEdit()" >保存</button>
+                <button type="button" onclick="javascript:history.back(-1);return false;" style="background: red;">取消</button>
+            </div>
+        </form>
+    </div>
+</row>
+<!-- 配置文件 -->
+<script type="text/javascript" src="__STATIC__/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__STATIC__/ueditor/ueditor.all.js"></script>
+<script type="text/javascript">
+    var contents = UE.getEditor('content',{
+        initialFrameWidth :900,//设置编辑器宽度
+        initialFrameHeight:350,//设置编辑器高度
+    });
+    function getNoticeEdit() {
+        var id = $("input[name='id']").val();
+        var name = $("input[name='name']").val();
+        var content = contents.getContent();
+        if(name.length == 0){
+            Alert("请输入公告标题",2);
+            return false;
+        }
+        if(name.length > 120){
+            Alert("公告标题输入长度不能超过120字符",2);
+            return false;
+        }
+        if(content.length == 0){
+            Alert("请输入公告内容",2);
+            return false;
+        }
+        var json = {name:name,content:content,id:id};
+        $.ajax({
+            type:"post",
+            url:"__HTTP__/Notice/edit",
+            data:json,
+            success:function (res) {
+                console.log(res);
+                if(res.errMsg == "令牌失效"){
+                    Alert("您登陆状态已失效,请重新登陆",2);
+                    return;
+                }
+                Alert("公告编辑成功",1);
+                setTimeout("getNotice()",2000);
+            }
+        });
+    }
+    function getNotice() {
+        window.location.href="__HTTP__/Notice";
+    }
+</script>

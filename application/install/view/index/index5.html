@@ -1,0 +1,33 @@
+{__NOLAYOUT__}
+{include file="index/top"}
+<div class="container">
+    <div class="row">
+        <div class="panel-heading">
+            __NAME__--安装完成
+        </div>
+        <div class="panel-body">
+            <div class="panel-heading">
+                <span>恭喜您,安装完成！</span>
+            </div>
+            <div class="panel-body">
+                <div class="alert alert-success text-center">
+                    <h3>SUCCESS !</h3>
+                </div>
+                <div class="alert alert-danger margin-top">
+                    后台管理员用户名密码默认均为admin，请尽快登录系统进行修改，防止系统被恶意攻击。
+                </div>
+                <a class="btn btn-primary" target="_blank" href="__HTTP__/login">登录后台</a>
+                <a class="btn btn-success" target="_blank" href="__HTTP__">访问首页</a>
+            </div>
+            <div class="panel-footer">
+                <span>版权所有 (c) 2014－<?php echo date("Y",time());?>  __COMPANY__  保留所有权利。</span>
+            </div>
+        </div>
+    </div>
+    </body>
+    <style type="text/css">
+        .dropdown1,.dropdown2,.dropdown3,.dropdown4,.dropdown5{
+            background-color: #393d49;
+        }
+    </style>
+    </html>

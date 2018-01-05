@@ -1,0 +1,63 @@
+{include file="User/error"}
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true">
+    <span>系统</span> /
+    <span>系统权限</span> /
+    <span>用户管理</span> /
+    <span>用户编辑</span>
+</span>
+<row>
+    <div class="col-md-8 col-md-offset-2" style="margin-top: 37px;">
+        <form class="form-horizontal" onsubmit="return getUserEdit('__HTTP__')">
+            <input name="id" type="hidden" id="id" value="{$user.id}" />
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户昵称</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="nickname" value="{$user.nickname}"
+                           name="nickname" placeholder="输入用户昵称">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户账号</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="username" value="{$user.username}"
+                           name="username" placeholder="输入用户账号" disabled="disabled">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户密码</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="password" class="form-control" id="password"
+                           name="password" placeholder="输入用户密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户邮箱</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="email" value="{$user.email}"
+                           name="email" placeholder="输入用户邮箱">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-md-3 control-label">
+                    <div class="text-center">用户手机号码</div>
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="mobile" value="{$user.mobile}"
+                           name="mobile" placeholder="输入用户手机号码">
+                </div>
+            </div>
+            <div class="form-group save-btn">
+                <button type="button" onclick="return getUserEdit('__HTTP__')" >保存</button>
+                <button type="button" onclick="javascript:history.back(-1);return false;" style="background: red;">取消</button>
+            </div>
+        </form>
+    </div>
+</row>

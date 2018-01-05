@@ -1,0 +1,108 @@
+{__NOLAYOUT__}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {include file="home/link"}
+    <link rel="stylesheet" href="__CSS__/index/article_detail.css">
+</head>
+<body>
+{include file="home/nav"}
+<div class="content">
+    <div class="wrapper container">
+        <div class="row">
+            <div class="col-xs-12 col-md-8">
+                <div attr-id="{$articleDetail.id}" class="article-list">
+                    <div class="item">
+                        <h1 class="item-title">{$articleDetail.title}</h1>
+                        <p class="item-author">
+                            <span>作者:{$articleDetail.author}</span>
+                            <span>创建时间:{$articleDetail.create_time}</span>
+                            <span>浏览:{$articleDetail.hit}</span>
+                        </p>
+                        <div class="item-img">
+                            <img class="bigImg" src="{$articleDetail.picture||findImg}">
+                        </div>
+                        <div class="item-desc">
+                            {$articleDetail.content}
+                        </div>
+                    </div>
+                </div>
+                <div class="article-comment">
+                    <h4>发表评论</h4>
+                    <input type="hidden" value="{$articleDetail.id}">
+                    <textarea class="comment-textarea form-control" rows="3"></textarea>
+                    <div class="comment-btn clear">
+                        <button type="button" class=" btn btn-success">评论</button>
+                    </div>
+                </div>
+                <div class="article-comment-list-wrapper">
+                    <h4>评论区</h4>
+                    <ul class="article-comment-list">
+                        {volist name='comment' id='item'}
+                        <li class="article-comment-item" data-id="{$item.id}">
+                            <p>{$item.address}{$item.ip}
+                                <span class="comment-text">
+                                    {$item.content}
+                                </span>
+                            </p>
+                            <div class="comment-des clear">
+                                <div class="comment-time">{$item.create_time}</div>
+                                <div class="comment-reply-text">回复</div>
+                            </div>
+                            <div class="comment-reply-wrapper">
+                                <div class="comment-reply-list">
+                                    <ul>
+                                        {volist name='item.reply' id="v"}
+                                        <li>{$v.content}</li>
+                                        {/volist}
+                                    </ul>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputText">回复</label>
+                                    <input type="text" class="form-control" id="exampleInputText" placeholder="输入回复内容">
+                                    <div class="comment-reply-btn clear">
+                                        <button type="button" class="btn btn-success btn-sm">回复</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {/volist}
+                    </ul>
+                </div>
+                <div class="pagination-wrapper">
+                    {if condition="$comment"}
+                    {$comment->render()}
+                    {/if}
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <div class="widget">
+                    {volist name='notice' id='item'}
+                        <div class="widget-item">
+                            <div class="notice">
+                                <h3 class="notice-title">{$item.name}</h3>
+                                <div class="notice-item">{$item.content}</div>
+                            </div>
+                        </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mask">
+    <span></span>
+</div>
+{include file="home/bottom"}
+<script src="__JS__/index/common/util.js"></script>
+<script src="__JS__/index/article_list/detail.js"></script>
+<script>
+    var img = "{$articleDetail.picture||findImg}"
+    console.log(img)
+    if(!img) {
+       $('.bigImg').hide()
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{__NOLAYOUT__}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {include file="home/link"}
+    <link rel="stylesheet" href="__CSS__/index/article.css">
+
+</head>
+<body>
+{include file="home/nav"}
+<div class="content"  style="min-height:799px;">
+    <div class="wrapper container">
+        <div class="row">
+            <div class="col-xs-12 col-md-8">
+                <div class="article-list">
+                    <ul class="list">
+                        {volist name="articleList" id="item"}
+                        <li class="item">
+                            <h1 class="item-title">{$item.title}</h1>
+                            <p class="item-author">
+                                <span>作者</span>
+                                <span>{$item.author}</span>
+                                <span>时间</span>
+                                <span>{$item.create_time}</span>
+                                <span>阅读</span>
+                                <span>{$item.hit}</span>
+                            </p>
+                            <div class="item-img">
+                                <a href="{:url('ArticleList/detail',['id' => $item.id])}">
+                                    <img class="bigImg" src="{$item.picture||findImg}">
+                                </a>
+                            </div>
+                            <div class="item-desc">{$item.brief}</div>
+                            <p class="item-btn">
+                                <a href="{:url('ArticleList/detail',['id' => $item.id])}">
+                                    <span>阅读全文</span>
+                                </a>
+                            </p>
+                        </li>
+                        {/volist}
+                    </ul>
+                    <div class="pagination-wrapper">
+                        {if condition="$articleList"}
+                        {$articleList->render()}
+                        {/if}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <div class="widget">
+                    {volist name='notice' id='item'}
+                    <div class="widget-item">
+                        <div class="notice">
+                            <h3 class="notice-title">{$item.name}</h3>
+                            <div class="notice-item">{$item.content}</div>
+                        </div>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="home/bottom"}
+<script href="__JS__/index/article.js"></script>
+<script>
+    $('.bigImg').each(function() {
+        var img = $(this).attr('src')
+        if(!img) {
+            $(this).hide()
+        }
+    })
+</script>
+</body>
+</html>
+

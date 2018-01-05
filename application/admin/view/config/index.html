@@ -1,0 +1,151 @@
+{include file="config/error"}
+<span class="glyphicon glyphicon-map-marker" aria-hidden="true">
+    <span>系统</span> /
+    <span>系统功能</span> /
+    <span>系统配置</span>
+</span>
+    <row>
+        <div class="col-md-8 col-md-offset-2" style="margin-top: 17px;">
+            <form class="form-horizontal" action="__HTTP__/Config" onsubmit="return getConfig()" enctype="multipart/form-data" method="post">
+                <div class="form-group ">
+                    <label for="username" class="col-md-3 control-label">
+                        <div class="text-center">站点开关</div>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="hidden" name="options" id="options" value='{$config["options"]}' />
+                        <div class='search_checkbox'>
+                            <?php if($config["options"] == "open") { ?>
+                                <input type='checkbox' id= 'switch' />
+                            <?php } else { ?>
+                                <input type='checkbox' id= 'switch' checked />
+                            <?php } ?>
+                            <label for='switch'></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="title" class="col-md-3 control-label">
+                        <div class="text-center">网站标题</div>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="title" value="{$config.title}" name="title" placeholder="输入网站标题">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="copyright" class="col-md-3 control-label">
+                        <div class="text-center">版权信息</div>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="copyright" value="{$config.copyright}" name="copyright" placeholder="输入版权信息">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="record" class="col-md-3 control-label">
+                        <div class="text-center"> 网站备案号</div>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="record" value="{$config.record}" name="record" placeholder="网站备案号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Keyword" class="col-md-3 control-label">
+                        <div class="text-center">网站关键词</div>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="Keyword" name="Keyword" value="{$config.Keyword}" placeholder="网站关键词">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="slogan" class="col-md-3 control-label">
+                        <div class="text-center">网站口号</div>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="slogan" value="{$config.slogan}" name="slogan" placeholder="网站口号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="logo" class="col-md-3 control-label">
+                        <div class="text-center">网站logo</div>
+                    </label>
+                    <div class="col-md-9">
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn" id="test1" style="background-color: #5bb75b;">上传图片</button>
+                        {include file="upload/add"}
+                            <div class="btn">
+                                <a data-target="#my" data-toggle="modal" id="buttonModel" style="color: #FFFFFF;" onclick="">选择已上传图片</a>
+                            </div>
+                            <input type="hidden" id="logo" name="logo" value="{$config.logo}" />
+                            <img src="__IMG__{$config.image}" id="image" style="width:90px;position: relative;left: 54px;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="describe" class="col-md-3 control-label">
+                        <div class="text-center">网站描述</div>
+                    </label>
+                    <div class="col-md-9">
+                        <textarea placeholder="网站描述" rows="5" class="form-control" id="describe" name="describe" style="resize:none">{$config.describe}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cache" class="col-md-3 control-label">
+                        <div class="text-center"> 登陆状态有限期</div>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="number" max="24" step="0.5"  class="form-control" id="cache"
+                               value="{$config.cache}" name="cache" placeholder="登陆状态有限期(单位:小时)">
+                    </div>
+                </div>
+                <div class="form-group save-btn">
+                    <button type="submit" >保存</button>
+                </div>
+            </form>
+        </div>
+    </row>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#buttonModel").click(function(){
+            $.ajax({
+                url: '__HTTP__/Upload/getUpload',
+                success: function (res) {
+                    setData(res);
+                }
+            })
+        })
+    });
+    $(document).on("click", "#switch", function() {
+        var ch = $(this).is(":checked");
+        if (ch) {
+            document.getElementById("options").value = "shut";
+        } else {
+            document.getElementById("options").value = "open";
+        }
+    });
+    function Selected(id) {
+        var image = document.getElementById("image");
+        document.getElementById("logo").value=id;
+        $.ajax({
+            url: '__HTTP__/Upload/getUpload',
+            success: function (res) {
+                for(var i = 0; i<res.length; i++){
+                    if(id == res[i].id){
+                        image.setAttribute("src","__IMG__"+res[i].path);
+                        document.getElementById("logo").value=id;
+                    }
+                }
+            }
+        })
+    }
+    function getDelete(id) {
+        $.ajax({
+            url:'__HTTP__/Upload/getDel',
+            type:"POST",
+            data:{
+                'id':id
+            },
+            success:function (res) {
+                SUCCSSAlert("图片删除成功");
+            }
+        });
+    }
+</script>
